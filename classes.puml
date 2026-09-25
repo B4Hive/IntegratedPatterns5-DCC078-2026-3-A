@@ -1,0 +1,72 @@
+@startuml Classes
+
+class Cliente{
+  -contrato:IContrato
+  -procuracao:IProcuracao
+  +Cliente(fabrica:IFabricaAbstrata):Cliente
+  +getContrato():IContrato
+  +getProcuracao():IProcuracao
+}
+
+interface IContrato{
+  get():String
+}
+
+class ContratoPF implements IContrato{
+  +get():String
+}
+
+class ContratoPJ implements IContrato{
+  +get():String
+}
+
+interface IProcuracao{
+  get():String
+}
+
+class ProcuracaoPF implements IProcuracao{
+  +get():String
+}
+
+class ProcuracaoPJ implements IProcuracao{
+  +get():String
+}
+
+interface IFabricaAbstrata{
+  criarContrato():IContrato
+  criarProcuracao():IProcuracao
+}
+
+class FabricaPF implements IFabricaAbstrata{
+  +criarContrato():IContrato
+  +criarProcuracao():IProcuracao
+}
+
+class FabricaPJ implements IFabricaAbstrata{
+  +criarContrato():IContrato
+  +criarProcuracao():IProcuracao
+}
+
+Cliente --> "1" IProcuracao
+Cliente --> "1" IContrato
+Cliente ..> IFabricaAbstrata
+FabricaPJ ..> ContratoPJ
+FabricaPJ ..> ProcuracaoPJ
+FabricaPF ..> ContratoPF
+FabricaPF ..> ProcuracaoPF
+
+class SFM{
+  -instance:SFM
+  -SFM():SFM
+  +getInstance():SFM
+  +getFabrica(tipo:String):IFabricaAbstrata
+}
+
+SFM --> "1" SFM
+SFM ..> FabricaPF
+SFM ..> FabricaPJ
+Object <.. SFM
+Class <.. SFM
+Exception <.. SFM
+
+@enduml
