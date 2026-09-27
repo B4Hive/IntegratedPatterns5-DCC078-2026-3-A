@@ -15,9 +15,8 @@ public class SingletonFactoryMethod {
         return instance;
     }
 
-    @SuppressWarnings ({"deprecation", "rawtypes"})
     public Pagamento createPagamento(float valor, String tipoPagamento){
-        Class c = null;
+        Class<?> c = null;
         Object o = null;
 
         Pagamento pagamento = new PagamentoComum(valor);
@@ -28,7 +27,7 @@ public class SingletonFactoryMethod {
         for (String p : pagamentos){
             try {
                 c = Class.forName("b4hive.pagamentos.Pagamento" + p);
-                o = c.newInstance();
+                o = c.getConstructor(Pagamento.class).newInstance(pagamento);
                 ((PagamentoDecorator) o).setPagamento(pagamento);
                 pagamento = (Pagamento) o;
             } catch (Exception e) {
@@ -38,13 +37,12 @@ public class SingletonFactoryMethod {
         return pagamento;
     }
 
-    @SuppressWarnings ({"deprecation", "rawtypes"})
     public AbstractFactory createFactory(String tipo) {
-        Class c = null;
+        Class<?> c = null;
         Object o = null;
         try {
             c = Class.forName("b4hive.factories.Factory" + tipo);
-            o = c.newInstance();
+            o = c.getConstructor().newInstance();
         } catch (Exception e) {
             throw new IllegalArgumentException();
         }
