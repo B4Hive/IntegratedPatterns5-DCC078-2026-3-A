@@ -1,22 +1,25 @@
 package b4hive;
 
-public class Cliente {
-    private final IContrato contrato;
-    private final IProcuracao procuracao;
+import b4hive.contratos.Contrato;
+import b4hive.documentos.Documento;
+import b4hive.factories.AbstractFactory;
 
-    public Cliente(IFabricaAbstrata fabrica) {
-        if (fabrica == null) {
-            throw new IllegalArgumentException("A fábrica não pode ser nula");
-        }
-        this.contrato = fabrica.criarContrato();
-        this.procuracao = fabrica.criarProcuracao();
+public class Cliente {
+
+    private final Documento documento;
+    private final Contrato contrato;
+
+    public Cliente(AbstractFactory fabrica, String infoDocumento, String infoContrato, float valorPagamento, String tipoPagamento) {
+        this.documento = fabrica.registerDocumento(infoDocumento);
+        this.contrato = fabrica.registerContrato(infoContrato, fabrica.registerPagamento(valorPagamento, tipoPagamento));
     }
 
-    public IContrato getContrato() {
+    public Contrato getContrato() {
         return contrato;
     }
 
-    public IProcuracao getProcuracao() {
-        return procuracao;
+    public Documento getDocumento() {
+        return documento;
     }
+
 }

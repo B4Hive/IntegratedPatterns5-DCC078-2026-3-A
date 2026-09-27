@@ -1,72 +1,68 @@
-@startuml Classes
+@startuml classDiagram
 
-class Cliente{
-  -contrato:IContrato
-  -procuracao:IProcuracao
-  +Cliente(fabrica:IFabricaAbstrata):Cliente
-  +getContrato():IContrato
-  +getProcuracao():IProcuracao
+hide members
+
+left to right direction
+
+package factories{
+
+  class SingletonFactoryMethod
+  interface AbstractFactory <<interface>>
+  class FactoryPF implements AbstractFactory
+  class FactoryPJ implements AbstractFactory
+
+  SingletonFactoryMethod --* "1" SingletonFactoryMethod : Singleton
+  SingletonFactoryMethod ..> AbstractFactory
+  Exception <.. SingletonFactoryMethod
+  Class <.. SingletonFactoryMethod
+  Object <.. SingletonFactoryMethod
+
 }
 
-interface IContrato{
-  get():String
+SingletonFactoryMethod ..> pagamentos.Pagamento
+
+package contratos{
+
+  interface Contrato <<interface>>
+  class ContratoPF implements Contrato
+  class ContratoPJ implements Contrato
+
+  FactoryPF ..> ContratoPF
+  FactoryPJ ..> ContratoPJ
+
 }
 
-class ContratoPF implements IContrato{
-  +get():String
+package documentos{
+
+  interface Documento <<interface>>
+  class DocmentoPF implements Documento
+  class DocumentoPJ implements Documento
+
+  FactoryPF ..> DocmentoPF
+  FactoryPJ ..> DocumentoPJ
+
 }
 
-class ContratoPJ implements IContrato{
-  +get():String
+package pagamentos{
+
+  interface Pagamento <<interface>>
+  class PagamentoComum implements Pagamento
+  abstract class PagamentoDecorator <<abstract>> implements Pagamento
+  class PagamentoParcelado extends PagamentoDecorator
+  class PagamentoCredito extends PagamentoDecorator
+  class PagamentoDesconto extends PagamentoDecorator
+
+  Pagamento "1" *-- PagamentoDecorator
+  AbstractFactory ..> Pagamento
+
 }
 
-interface IProcuracao{
-  get():String
-}
+Contrato --* "1" pagamentos.Pagamento : Bridge
 
-class ProcuracaoPF implements IProcuracao{
-  +get():String
-}
+class Cliente
 
-class ProcuracaoPJ implements IProcuracao{
-  +get():String
-}
-
-interface IFabricaAbstrata{
-  criarContrato():IContrato
-  criarProcuracao():IProcuracao
-}
-
-class FabricaPF implements IFabricaAbstrata{
-  +criarContrato():IContrato
-  +criarProcuracao():IProcuracao
-}
-
-class FabricaPJ implements IFabricaAbstrata{
-  +criarContrato():IContrato
-  +criarProcuracao():IProcuracao
-}
-
-Cliente --> "1" IProcuracao
-Cliente --> "1" IContrato
-Cliente ..> IFabricaAbstrata
-FabricaPJ ..> ContratoPJ
-FabricaPJ ..> ProcuracaoPJ
-FabricaPF ..> ContratoPF
-FabricaPF ..> ProcuracaoPF
-
-class SFM{
-  -instance:SFM
-  -SFM():SFM
-  +getInstance():SFM
-  +getFabrica(tipo:String):IFabricaAbstrata
-}
-
-SFM --> "1" SFM
-SFM ..> FabricaPF
-SFM ..> FabricaPJ
-Object <.. SFM
-Class <.. SFM
-Exception <.. SFM
+Cliente ..> AbstractFactory
+Cliente --* "1" Documento
+Cliente --* "1" Contrato
 
 @enduml
